@@ -1,0 +1,43 @@
+🎟️ Ticket Simulation – Tiered Support Demonstration
+📌 Ticket 1: Password Reset Request
+User: Owen Thomas
+
+Tier: Tier 1
+
+Issue: Cannot log in
+
+Triage: Verified it was a password issue, no lockout or MFA error
+
+Resolution:
+Sent canned response with a link to the self-service password reset portal. Provided instructions and offered follow-up assistance if needed.
+
+🖼️ Screenshot:
+
+📌 Ticket 2: VPN Issues
+User: Jane Doe
+
+Tier: Tier 2
+
+Issue: Unable to connect to VPN
+
+Triage: Confirmed user is enrolled, recent password change likely caused credential sync delay
+
+Resolution:
+Guided user to clear VPN credentials cache and re-authenticate using updated credentials. Verified access restored.
+
+🖼️ Screenshot:
+
+📌 Ticket 3: Malware/Phishing Incident
+User: Paula Craig
+
+Tier: Tier 3
+
+Issue: Reported phishing/malware email
+
+Triage: Reviewed headers and confirmed phishing vector
+
+Resolution:
+Blocked sender domain across mail system, escalated to security vendor. Closed ticket with assurance to user.
+
+🖼️ Screenshot:
+
