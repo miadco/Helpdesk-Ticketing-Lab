@@ -1,265 +1,80 @@
-# 🧾 Azure Helpdesk Ticketing Lab (osTicket Deployment)
+# Azure Helpdesk Ticketing System Lab
 
-This lab demonstrates the deployment and configuration of **osTicket** — an open-source support ticket system — on an **Azure-hosted Ubuntu Server**. It simulates a production-level IT support environment, complete with ticket automation, SLA management, and email integration.
+*I built this lab to demonstrate real-world IT service delivery using Microsoft Azure and osTicket, replicating what you'd expect from an enterprise helpdesk support role.*
 
----
-
-## 📚 Table of Contents
-
-- ✅ Prerequisites
-- 🎯 Objectives
-- 🧱 Lab Architecture
-- 🚀 Phase 1: Provision Azure VM
-- 🛠️ Phase 2: LAMP Stack + osTicket Setup
-- 🗃️ Phase 3: MySQL and Apache Configuration
-- 🌐 Phase 4: Web Configuration
-- ⚙️ Phase 5: Post-Install Configuration
-- 🧪 Phase 6: Simulated IT Support Scenarios
-- ✉️ Phase 7: Email Integration (Optional)
-- 📸 Screenshots
-- 🧠 Lessons Learned
-- 🧰 Technologies Used
-
-## ✅ Prerequisites
-
-Before you begin:
-
-- 🔑 **Azure Subscription** with sufficient credits
-- 💻 **SSH client** (e.g., Terminal, PuTTY, VS Code Remote)
-- 🧠 **Basic Linux command-line knowledge**
-- 📤 Optional: Gmail or Outlook account (for SMTP setup)
-
-
-
-## 🎯 Objectives
-
-- Deploy a secure and scalable **Ubuntu Server VM** in Azure
-- Install and configure **LAMP stack** and **osTicket**
-- Simulate realistic IT support operations including:
-  - Identity-related ticket handling
-  - Canned responses and SLA workflows
-  - Email-to-ticket conversion (SMTP)
-  - Audit trails and support logs
-- Document and showcase ITSM knowledge with GitHub
+An end-to-end simulation of a cloud-based IT service desk deployed on Microsoft Azure, showcasing core competencies in cloud administration, IT support, and systems management.
 
 ---
 
-## 🧱 Lab Architecture
+## ✨ Core Competencies Demonstrated
 
-```plaintext
-┌─────────────────────┐
-│ Azure Ubuntu VM     │
-│ (osTicket Server)   │
-├─────────────────────┤
-│ Apache2             │
-│ MySQL               │
-│ PHP Modules         │
-│ osTicket v1.18.1    │
-└─────────────────────┘
-         ▲
-         │
-  Public IP Address
-         │
-     Web Browser
-```
-
-📌 *Consider replacing with a visual diagram from [diagrams.net](https://www.diagrams.net) for more polish*
+* **Cloud Infrastructure:** Provisioned and secured Azure VMs, Networking (VNet, NSG), and Static IPs.
+* **IT Service Management (ITSM):** Configured a multi-tiered support structure, defined agent roles, created SLA policies, and automated ticket routing.
+* **System Administration:** Deployed and managed a full LAMP stack (Linux, Apache, MySQL, PHP) on an Ubuntu server.
+* **Technical Documentation:** Created detailed resolution notes simulating professional IT reporting standards.
+* **Security & Incident Response:** Performed a simulated security investigation based on a suspicious login alert.
+* **Cloud FinOps:** Implemented cost management best practices by deallocating resources and setting up budget alerts.
 
 ---
 
-## 🚀 Phase 1: Provision Azure VM
+## ⚙️ Phased Implementation
 
-- **Image**: Ubuntu Server 22.04 LTS
-- **Size**: Standard B1ms (1 vCPU, 2 GiB RAM)
-- **Resource Group**: `TicketingLab-RG`
-- **VM Name**: `TicketLab-VM`
-- **Open Ports**:
-  - 22 (SSH)
-  - 80 (HTTP)
+### Phase 1: Azure Infrastructure Provisioning
 
----
+* **Resource Group:** TicketingLab-RG
+* **Virtual Machine:** TicketingLab-VM (Standard B2s size)
+* **Operating System:** Ubuntu Server 22.04 LTS
+* **Networking:** Configured VNet, NSG, and a Static Public IP
+* **Security:** Created NSG inbound rules for HTTP (80), HTTPS (443), and SSH (22)
 
-## 🛠️ Phase 2: LAMP Stack + osTicket Setup
+### Phase 2: LAMP Stack & osTicket Installation
 
-SSH into the VM and run:
+* Installed Apache2, MySQL Server, and PHP v8.1 with required extensions
+* Secured the MySQL instance and created a dedicated `osticket_db` database
+* Deployed osTicket v1.18.1 to `/var/www/html` and completed the web installation
 
-```bash
-sudo apt update && sudo apt upgrade -y
-sudo apt install apache2 mysql-server php php-mysqli php-imap php-apcu php-intl php-gd php-mbstring php-xml php-cli php-common unzip wget -y
-```
+### Phase 3: Service Desk Configuration
 
-Download and install osTicket:
+* **Departments:** Tier 1 Support, Tier 2 Support, Tier 3 Security
+* **Roles & Permissions:** Created granular roles for Agents to ensure proper access controls
+* **Agents:** Configured three agent accounts (Alice - T1, Bob - T2, Eve - T3)
 
-```bash
-cd /var/www/html
-sudo wget https://github.com/osTicket/osTicket/releases/download/v1.18.1/osTicket-v1.18.1.zip
-sudo unzip osTicket-v1.18.1.zip
-sudo mv upload osticket
-sudo chown -R www-data:www-data /var/www/html/osticket
-sudo chmod -R 755 /var/www/html/osticket
-```
+### Phase 4: SLA & Workflow Automation
 
----
+* **SLA Plans:** Established a "1-Hour Response" SLA to ensure timely support
+* **Automation:** Configured help topics to automatically route new tickets to the appropriate department
 
-## 🗃️ Phase 3: MySQL and Apache Configuration
+### Phase 5: Live Ticket Simulation
 
-### Configure MySQL:
-
-```bash
-sudo mysql -u root -p
-```
-
-```sql
-CREATE DATABASE osticket;
-CREATE USER 'ostuser'@'localhost' IDENTIFIED BY 'StrongPassword123!';
-GRANT ALL PRIVILEGES ON osticket.* TO 'ostuser'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
-```
-
-> ⚠️ **Security Note:** Replace `'StrongPassword123!'` with a secure, randomly generated password for real-world deployments.
-
-### Configure Apache:
-
-```bash
-sudo nano /etc/apache2/sites-available/osticket.conf
-```
-
-Paste:
-
-```apache
-<VirtualHost *:80>
-    DocumentRoot /var/www/html/osticket
-    <Directory /var/www/html/osticket>
-        AllowOverride All
-        Require all granted
-    </Directory>
-</VirtualHost>
-```
-
-Then run:
-
-```bash
-sudo a2ensite osticket.conf
-sudo a2enmod rewrite
-sudo systemctl restart apache2
-```
+* **Password Reset (Tier 1):** Assigned to Alice, resolved without escalation
+* **VPN Issue (Tier 2):** Tier 1 attempted resolution, then escalated to Bob in Tier 2 for specialized support
+* **Suspicious Login (Tier 3):** Assigned directly to Eve for security investigation, which included log review and documentation
 
 ---
 
-## 🌐 Phase 4: Web Configuration
+## 🖼️ Screenshots & Walkthrough
 
-1. Visit `http://<your-public-ip>/` in your browser
-2. Complete the osTicket installer:
-   - DB Name: `osticket`
-   - DB User: `ostuser`
-   - DB Password: `StrongPassword123!`
-3. Post-install cleanup:
-```bash
-sudo rm -rf /var/www/html/osticket/setup
-```
+*(\*Insert actual screenshots below. The captions describe what each screenshot should show.)*
 
----
+1. **Azure VM Configuration:**
 
-## ⚙️ Phase 5: Post-Install Configuration
+   * Azure Portal showing TicketingLab-VM details, including its public IP, size, and resource group
 
-After the initial setup, configure the osTicket platform to simulate a functional helpdesk environment.
+2. **osTicket Admin Panel:**
 
-🔗 Admin Panel: `http://<your-public-ip>/scp`
+   * osTicket admin dashboard, providing an overview of the system configuration sections
 
-### Configure the following:
+3. **Department & Agent Setup:**
 
-- **Agents & Roles**  
-  Create IT support staff (Agents). Define Roles to control visibility and permissions (e.g., Admin, Tier 1 Support).
+   * Configured departments (Tier 1–3) and list of agents (Alice, Bob, Eve) with assigned roles
 
-- **Departments**  
-  Route tickets by department:  
-  - IT Support  
-  - Identity & Access Management  
-  - Network Operations
+4. **Live Ticket Lifecycle:**
 
-- **Help Topics**  
-  Predefined issue types to streamline automation:  
-  - Password Reset  
-  - Account Lockout  
-  - General Inquiry
-
-- **SLA Plans**  
-  Service targets for response and resolution:  
-  - Standard: 24hr  
-  - Urgent: 4hr  
-  - Critical: 1hr
-
-- **Canned Responses**  
-  Pre-written replies for:
-  - Account provisioning
-  - Welcome emails
-  - Ticket closures
-
-- **User Directory**  
-  Register test end-users to simulate ticket submissions and trigger workflows.
+   * Composite or series of screenshots showing a ticket's journey from creation to resolution
 
 ---
 
-## 🧪 Phase 6: Simulated IT Support Scenarios
+## 💸 Cleanup & Cost Management
 
-| Ticket Type                  | Description                                         |
-|-----------------------------|-----------------------------------------------------|
-| Password Reset              | Identity ticket with ownership validation           |
-| Account Lockout             | Support workflow involving audit log review         |
-| Access Request              | Simulates entitlement approval                      |
-| Email Integration Failure   | SMTP/IMAP troubleshooting scenario                  |
-| Trend Analysis              | Export and review of ticket data                   |
-
----
-
-## ✉️ Phase 7: Email Integration (Optional)
-
-- Configure SMTP using Gmail or Outlook
-- Enable email piping in Admin Panel
-- Send test emails and verify auto-ticket creation
-
----
-
-## 📸 Screenshots
-
-> Replace each placeholder below with your actual screenshots:
-
-### Dashboard
-![osTicket Dashboard](screenshots/dashboard.png)
-
-### Ticket Workflow
-![Ticket Creation and Response](screenshots/ticket_workflow.png)
-
-### Email-to-Ticket Trigger
-![Email Integration](screenshots/email_trigger.png)
-
-### SLA and Help Topics
-![SLA Configuration](screenshots/sla_help_topics.png)
-
-### Exported Reports
-![Support Report](screenshots/exported_report.png)
-
----
-
-## 🧠 Lessons Learned
-
-- Built a cloud-hosted ITSM platform from scratch
-- Practiced realistic IT support workflows
-- Strengthened skills in Linux, MySQL, and Apache2
-- Simulated Tier 1–2 operational scenarios
-- Integrated email-based automation
-
----
-
-## 🧰 Technologies Used
-
-- Microsoft Azure
-- Ubuntu Server 22.04 LTS
-- osTicket v1.18.1
-- Apache2
-- MySQL
-- PHP 8.x
-- Gmail SMTP (optional)
-
----
+* **De-allocation:** VM was shut down from the Azure portal when not in use to stop compute charges
+* **Resource Deletion:** Upon project completion, the entire `TicketingLab-RG` was deleted to remove all associated resources
